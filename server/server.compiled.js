@@ -6,7 +6,7 @@ var app = express();
 
 var path = require('path');
 
-var PORT = process.env.PORT;
+var PORT = process.env.PORT || 8081;
 
 var dbquery = require('../db/queries');
 
@@ -16,14 +16,12 @@ var _require = require('http-proxy-middleware'),
 
 app.use(express["static"](path.join(__dirname, '../frontEnd/dist')));
 app.use(express.json());
-app.get('/api/getReviews', function (req, res) {
-  console.log('Got a get req for id', req.query.id);
-  dbquery.getTheReviews(req.query.id, function (error, results) {
+app.get('/products', function (req, res) {
+  queries.getProducts(function (error, result) {
     if (error) {
-      console.log('ERROR IN SERVER getTheReviews', error);
-      res.status(400).send(error);
+      console.error('error at endpoint with getting products', error);
     } else {
-      res.status(200).send(results);
+      res.send(result);
     }
   });
 }); // Need to move server compiled into same folder as server

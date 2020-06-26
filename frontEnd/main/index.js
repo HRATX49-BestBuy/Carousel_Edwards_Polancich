@@ -4,7 +4,7 @@ import App from './Main.jsx'
 
 ReactDOM.render(
 <App />, 
-document.getElementById('Review')
+document.getElementById('Carousel')
 );
 
 

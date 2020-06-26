@@ -1,10 +1,10 @@
 const mysql = require('mysql');
 const connection = mysql.createConnection({
-  host: process.env.RDS_HOSTNAME,
-  user: process.env.RDS_USERNAME,
-  password: process.env.RDS_PASSWORD,
-  database: process.env.RDS_DB_NAME,
-  port: process.env.RDS_PORT,
+  host: process.env.RDS_HOSTNAME||'localhost',
+  user: process.env.RDS_USERNAME||'root',
+  password: process.env.RDS_PASSWORD||'Hamster94!',
+  database: process.env.RDS_DB_NAME||'bestBuyReviews',
+  port: process.env.RDS_PORT || 3306,
 });
 
 connection.connect((err)=>{
@@ -17,21 +17,31 @@ connection.connect((err)=>{
 
 //to do sanitize queries
 
-const getTheReviews = (id,cb) =>{
-  console.log('Quering DB FOR ID',id)
-  connection.query("SELECT * FROM product WHERE id=?",[id],(error,results)=>{
-    if (error){
-      console.log('Error with getTheReviews QUERY',error);
-      cb(error,null)
-    } else {
-      cb (null,results)
-    }
+const seedDatabase = (reviewCount, image, name, price, description, thumbnail, callback) => {
+  connection.query('INSERT INTO product (customerReviewCount, image, name, regularPrice, thumbnailImage) VALUES (?, ?, ?, ?, ?)',[reviewCount, image, name, price, description, thumbnail],  (error, result) => {
+      if (error) {
+          console.error('error with query', error);
+          callback(error, null);
+      } else {
+          console.log('query successful')
+          callback(null, result);
+      }
   })
 }
 
+const getProducts = (callback) => {
+  connection.query('SELECT * FROM product', (error, result) => {
+      if (error) {
+          callback(error, null);
+          console.error('error getting products at query level', error);
+      } else {
+          console.log(result)
+          callback(null, result);
+      }
+  })
+}
 
-
-
-module.exports ={
-  getTheReviews
+module.exports = {
+  seedDatabase,
+  getProducts
 }
