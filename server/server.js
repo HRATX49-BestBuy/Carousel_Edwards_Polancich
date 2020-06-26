@@ -13,7 +13,7 @@ app.use(express.json())
 
 
 app.get('/products', (req, res) => {
-  queries.getProducts((error, result) => {
+  dbqueries.getProducts((error, result) => {
       if (error) {
           console.error('error at endpoint with getting products', error);
       } else {
